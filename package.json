@@ -1,0 +1,12 @@
+{
+    "name": "com.holadivinus.ultsharp",
+    "version": "1.0.0",
+    "displayName": "UltSharp",
+    "description": "C# to UltEvent converter for Unity. Open the C# project with UltSharp -> Open Project Folder. Add the UltSharpScript component to put your scripts in-level/spawnable/avatar.",
+    "unity": "2021.3",
+  "author": {
+    "name": "holadivinus",
+    "email": "holadivinus@gmail.com",
+    "url": "https://github.com/holadivinus/UltSharp"
+  }
+}
