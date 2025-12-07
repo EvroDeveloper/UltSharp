@@ -179,8 +179,32 @@ namespace UltSharp
                 var objType = FindOrAddConstMethod(FGMethod<Type>("GetType", TA.R<string, bool, bool>()), UltRet.Params(typeof(object).AssemblyQualifiedName, true, true));
                 var ultedParamsArray = FindOrAddConstMethod(FGMethod<Array>("CreateInstance", TA.R<Type, int>()), UltRet.Params(objType, inputs.Length - 1));
 
+                var methParams = m.GetParameters();
                 for (int i = 1; i < inputs.Length; i++)
-                    AddMethod(typeof(CompileUtils).GetMethod("ArrayItemSetter1", TA.R<Array, int, object>()), UltRet.Params(ultedParamsArray, i-1, inputs[i]));
+                {
+                    // Make sure Value UltRets are of the right Type, since the C# compiler loves pranking us
+                    UltRet paramUltRet = inputs[i];
+                    Type paramRealType = methParams[i - 1].ParameterType;
+                    if (paramRealType.IsValueType && paramUltRet.Const != null)
+                    {
+                        PersistentArgumentType asArg = paramRealType.ToArgType();
+                        if (asArg != PersistentArgumentType.None && paramUltRet.Type != asArg)
+                        {
+                            if (asArg == PersistentArgumentType.Bool && paramUltRet.Type == PersistentArgumentType.Int)
+                            {
+                                int val = (int)paramUltRet.Const.Value;
+                                paramUltRet.OverrideRetType(paramRealType);
+                                paramUltRet.Const.Type = asArg;
+                                paramUltRet.Const.Value = val == 0 ? false : true;
+                            }
+                            else
+                            {
+                                paramUltRet.OverrideRetType(paramRealType);
+                            }
+                        }
+                    }
+                    AddMethod(typeof(CompileUtils).GetMethod("ArrayItemSetter1", TA.R<Array, int, object>()), UltRet.Params(ultedParamsArray, i - 1, inputs[i]));
+                }
 
                 // hope we get a replacement to this next patch ...
                 Type secureUtils = Type.GetType("System.SecurityUtils, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", true, true);
