@@ -205,6 +205,13 @@ namespace UltSharp
         public static Type[] R<A, B, C, D, E, F, G>() => new Type[] { typeof(A), typeof(B), typeof(C), typeof(D), typeof(E), typeof(F), typeof(G) };
         public static Type[] R<A, B, C, D, E, F, G, H>() => new Type[] { typeof(A), typeof(B), typeof(C), typeof(D), typeof(E), typeof(F), typeof(G), typeof(H) };
 
+        public static Type[] Repeat<T>(int c)
+        {
+            var arr = new Type[c];
+            for (int i = 0; i < c; i++)
+                arr[i] = typeof(T);
+            return arr;
+        }
     }
 
     public partial class ScriptCompiler

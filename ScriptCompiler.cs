@@ -343,6 +343,29 @@ namespace UltSharp
                             if (call.Name == "ToString" && call.ReturnType == typeof(string) && !call.IsStatic)
                                 call = FGMethod<string>("Concat", typeof(string));
 
+                            if (call.IsGenericMethod)
+                            {
+                                // Check if this generic method has an alternate that just takes a type as first param
+                                var nonGenericAlt = call.DeclaringType.GetMethods().FirstOrDefault(m => m.Name == call.Name && !m.IsGenericMethod  // find a method with same name but not generic
+                                 && 
+                                     (m.GetParameters().Select(p => p.ParameterType) // get its params
+                                     .SequenceEqual( // compare to
+                                      TA.Repeat<Type>(call.GetGenericArguments().Length).Concat(call.GetParameters().Select(p => p.ParameterType))))); // our meth's params, prepended with types
+                                if (nonGenericAlt == null)
+                                    throw new Exception("Failed to call method \"" + meth.ToString() + "\"! Method uses Generic Type Params, with no non-generic alternative!");
+
+                                UltRet inst = null;
+                                if (!call.IsStatic)
+                                    inst = Stack.Pop();
+                                foreach (var t in call.GetGenericArguments())
+                                {
+                                    Stack.Push(h.AddMethod(FGMethod<Type>("GetType", TA.R<string, bool, bool>()), UltRet.Params(t.AssemblyQualifiedName, true, true)));
+                                }
+                                if (!call.IsStatic)
+                                    Stack.Push(inst);
+                                call = nonGenericAlt;
+                            }
+
                             int paramCount = call.GetParameters().Length + (call.IsStatic ? 0 : 1);
                             UltRet[] inputs = new UltRet[paramCount];
                             int c = 0;
