@@ -130,7 +130,7 @@ namespace UltSharp
 
                     VisualElement v;
                     PropsRoot.Add(
-                        v = GetFieldForType(field, field.Name, store.Comp, store.PropName, userOverride != null ? userOverride.Value.Value : field.DefaultValue)
+                        v = GetFieldForType(field, field.Name, store.Comp, store.PropName, userOverride != null ? userOverride.Value.Value : field.GetDefault())
                     );
                     if (v is BindableElement b)
                     {
@@ -188,6 +188,7 @@ namespace UltSharp
                 var o = new FloatField(fieldName);
                 o.bindingPath = binding;
                 o.BindProperty(new SerializedObject(storager).FindProperty("m_AspectRatio"));
+                Debug.Log(fieldName);
                 o.value = (float)@default;
                 o.RegisterValueChangedCallback((e) => { if (e.previousValue != e.newValue) makeOverride(e.newValue); });
                 return o;

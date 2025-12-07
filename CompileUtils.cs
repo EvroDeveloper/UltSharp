@@ -151,6 +151,41 @@ namespace UltSharp
             { typeof(Vector2), (typeof(RectTransform), typeof(RectTransform).GetProperty("sizeDelta", UltEventUtils.AnyAccessBindings)) }
         };
 
+        public static object GetDefault(this Field f)
+        {
+            switch (f.FieldType._assemblyTypeName)
+            {
+                case "UnityEngine.Vector2, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null":
+                    {
+                        Vector2 v2 = new Vector2();
+                        string[] dv = ((string)f.DefaultValue).Split(',');
+                        v2.x = float.Parse(dv[0].TrimStart('('));
+                        v2.y = float.Parse(dv[1].TrimEnd(')'));
+                        return v2;
+                    }
+                case "UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null":
+                    {
+                        Vector3 v3 = new Vector3();
+                        string[] dv = ((string)f.DefaultValue).Split(',');
+                        v3.x = float.Parse(dv[0].TrimStart('('));
+                        v3.y = float.Parse(dv[1]);
+                        v3.z = float.Parse(dv[2].TrimEnd(')'));
+                        return v3;
+                    }
+                case "UnityEngine.Vector4, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null":
+                    {
+                        Vector4 v4 = new Vector4();
+                        string[] dv = ((string)f.DefaultValue).Split(',');
+                        v4.x = float.Parse(dv[0].TrimStart('('));
+                        v4.y = float.Parse(dv[1]);
+                        v4.y = float.Parse(dv[2]);
+                        v4.z = float.Parse(dv[3].TrimEnd(')'));
+                        return v4;
+                    }
+                default:
+                    return f.DefaultValue;
+            }
+        }
 
         // todo: make mbh swap these to SLZ's ingame variant
         public static bool GreaterThan(float a, float b) {  return a > b; }
