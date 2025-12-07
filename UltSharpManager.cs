@@ -63,7 +63,7 @@ namespace UltSharp
         static UltSharpManager()
         {
             // Soft Dependancies
-            Client.AddAndRemove(new string[] { "https://github.com/holadivinus/BLXRComp.git", "https://github.com/holadivinus/MarrowBuildHook.git" }, null);
+            //Client.AddAndRemove(new string[] { "https://github.com/holadivinus/BLXRComp.git", "https://github.com/holadivinus/MarrowBuildHook.git" }, null); dingus
 
 
             if (!Directory.Exists(CustomProjFolder))
