@@ -49,7 +49,7 @@ namespace UltSharp
                     var fieldRoot = new GameObject((field.IsPublic ? "public " : "private ") + field.FieldType.Name + " " + field.Name);
                     fieldRoot.SetActive(false);
                     fieldRoot.transform.SetParent(scriptComp.LastCompiledRoot.transform, false); 
-                    VariableStores.Add(field, new CompVar(fieldRoot, field.FieldType, fieldUserOverride == null ? field.DefaultValue : fieldUserOverride.Value.Value));
+                    VariableStores.Add(field, new CompVar(fieldRoot, field.FieldType, fieldUserOverride == null ? field.GetDefault() : fieldUserOverride.Value.Value));
                 }
                 else throw new NotImplementedException($"UltScript {script.Name} on {scriptComp.gameObject.GetPath()} Attempted to use a static variable!");
             }
