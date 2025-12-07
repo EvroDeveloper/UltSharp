@@ -27,23 +27,23 @@ namespace UltSharp
                 return p != null;
             }
         }
-        private static string CustomProjFolder => Path.Combine(Directory.GetParent(Application.dataPath).FullName, "UltSharpCustom").Replace("/", "\\");
+        private static string CustomProjFolder => Path.Combine(Directory.GetParent(Application.dataPath).FullName, "UltSharpCustom");
         private static string _tpf;
         private static string ThisProjFolder
         {
             get
             {
-                if (!InPackage) return Path.Combine(Application.dataPath, "UltSharp").Replace("/", "\\");
+                if (!InPackage) return Path.Combine(Application.dataPath, "UltSharp");
                 else if (_tpf != null) return _tpf;
                 else
                 {
-                    string cacheFolder = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Library", "PackageCache");
+                    string cacheFolder = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Packages");
                     foreach (var dir in Directory.EnumerateDirectories(cacheFolder))
                     {
-                        if (dir.Contains("com.holadivinus.ultsharp"))
+                        if (dir.Contains("UltSharp"))
                         {
-                            _tpf = dir + "\\";
-                            _tpf = _tpf.Replace("/", "\\");
+                            _tpf = dir;
+
                             return _tpf;
                         }
                     }
@@ -51,13 +51,13 @@ namespace UltSharp
                 }
             }
         }
-        private static string CustomAssemblyFolder => Path.Combine(CustomProjFolder, "bin", "x64", "Debug").Replace("/", "\\");
-        private static string CustomAssemblyPath => Path.Combine(CustomAssemblyFolder, "UltSharpCustom.dll").Replace("/", "\\");
-        private static string ReaderAssemblyPath => Path.Combine(ThisProjFolder, "UltSharpCustomReader.dll").Replace("/", "\\");
-        private static string HarmonyAssemblyPath => Path.Combine(ThisProjFolder, "0Harmony2.dll").Replace("/", "\\");
-        private static string CustomProjZip => Path.Combine(ThisProjFolder, "UltSharpCustom.zip").Replace("/", "\\");
+        private static string CustomAssemblyFolder => Path.Combine(CustomProjFolder, "bin", "x64", "Debug", "netstandard2.0");
+        private static string CustomAssemblyPath => Path.Combine(CustomAssemblyFolder, "UltSharpCustom.dll");
+        private static string ReaderAssemblyPath => Path.Combine(ThisProjFolder, "UltSharpCustomReader.dll");
+        private static string HarmonyAssemblyPath => Path.Combine(ThisProjFolder, "0Harmony2.dll");
+        private static string CustomProjZip => Path.Combine(ThisProjFolder, "UltSharpCustom.zip");
         private static string ScriptAssembliesPath => Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Library", "ScriptAssemblies");
-        private static string UnityAssembliesPath => Path.Combine(Directory.GetParent(EditorApplication.applicationPath).FullName, "Data", "Managed", "UnityEngine");
+        private static string UnityAssembliesPath => Path.Combine(Directory.GetParent(EditorApplication.applicationPath).FullName, "Unity.app", "Contents", "Managed", "UnityEngine");
 
         // on Unity Load
         static UltSharpManager()
@@ -237,6 +237,10 @@ namespace UltSharp
                 Debug.LogException(ex);
                 Debug.Log(ex.FusionLog);
             }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to load UltSharpCustom.dll! Error: {ex}");
+            }
         }
 
 
@@ -275,7 +279,8 @@ namespace UltSharp
             }
 
             EnsureLatestUltBehaviorDef();
-            System.Diagnostics.Process.Start("explorer.exe", "/select," + Path.Combine(CustomProjFolder, "UltSharpCustom.sln"));
+            //System.Diagnostics.Process.Start("explorer.exe", "/select," + Path.Combine(CustomProjFolder, "UltSharpCustom.sln"));
+            EditorUtility.RevealInFinder(CustomProjFolder);
         }
 
         // since we might often change UltBehaviour.cs, we gotta make sure it updates
