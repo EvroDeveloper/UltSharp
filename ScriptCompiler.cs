@@ -644,6 +644,30 @@ namespace UltSharp
                                 Stack.Push(h.AddMethod(typeof(CompileUtils).FGetMethod("LessThan", TA.R<float, float>()), a, b));
                                 break;
                             }
+                        case "ceq":
+                            {
+                                var a = Stack.Pop();
+                                var b = Stack.Pop();
+
+                                // yet another int 2 bool sanity check
+                                // i need a better solution for this issue
+                                if ((a.Const == null && b.Const != null) || (a.Const != null && b.Const == null))
+                                {
+                                    UltRet constP = null;
+                                    UltRet retP = null;
+                                    if (a.Const != null) { constP = a; retP = b; }
+                                    if (b.Const != null) { constP = b; retP = a; }
+
+                                    if (constP.Const.Type == PersistentArgumentType.Int && retP.Type == PersistentArgumentType.Bool)
+                                    {
+                                        int v = (int)constP.Const.Value;
+                                        constP.Const.Type = PersistentArgumentType.Bool;
+                                        constP.Const.Value = v == 0 ? false : true;
+                                    }
+                                }
+                                Stack.Push(h.AddMethod(typeof(object).FGetMethod("Equals", TA.R<object, object>()), a, b));
+                                break;
+                            }
                         case "newobj":
                             {
                                 var ctor = (SerializedMethod)il.Operand;
